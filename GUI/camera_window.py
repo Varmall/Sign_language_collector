@@ -98,6 +98,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
                                  (width, height), isColor=True)
 
         for frame in self._frames_buffer:
+            print(frame.shape)
             writer.write(frame)
         writer.release()
         self.current_video += 1
