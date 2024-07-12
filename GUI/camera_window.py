@@ -93,8 +93,9 @@ class UiMainWindow(QtWidgets.QMainWindow):
                                       str(self.current_video))
 
         fourcc = cv2.VideoWriter.fourcc(*'mp4v')
+        width, height = self.config.get('video_size', (640, 480))
         writer = cv2.VideoWriter(video_path, fourcc, self.config.get('fps', 30),
-                                 self.config.get('video_size', (640, 480)))
+                                 (height, width))
 
         for frame in self._frames_buffer:
             writer.write(frame)
