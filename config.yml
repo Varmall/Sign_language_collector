@@ -1,0 +1,17 @@
+words:
+- 'yes'
+- 'no'
+- like
+- finish
+- happy
+- nice
+- eat
+- teacher
+data_path: D:\Projects\Sign_language_collector\GUI
+camera_id: 0
+video_size:
+- 1920
+- 1080
+fps: 30
+frames_per_vid: 40
+videos_per_word: 10
