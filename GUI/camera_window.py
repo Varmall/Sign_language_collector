@@ -154,6 +154,7 @@ class CaptureThread(QtCore.QThread):
         super().__init__(**kwargs)
         self.running = True
         self.video_capture = cv2.VideoCapture(camera_id)
+        print(self.video_capture.get(cv2.CAP_PROP_FPS))
         self.video_capture.set(cv2.CAP_PROP_FPS, fps)
         self.video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, video_size[0])
         self.video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, video_size[1])
