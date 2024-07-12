@@ -92,13 +92,13 @@ class UiMainWindow(QtWidgets.QMainWindow):
         video_path, exists = get_path(self.config['data_path'], self.control_panel.select_words_cbox.currentText(),
                                       str(self.current_video))
 
-        fourcc = cv2.VideoWriter.fourcc(*'MJPG')
+        fourcc = cv2.VideoWriter.fourcc(*'mp4v')
         width, height = self.config.get('video_size', (640, 480))
         writer = cv2.VideoWriter(video_path, fourcc, self.config.get('fps', 30),
                                  (width, height), isColor=True)
 
         for frame in self._frames_buffer:
-            print(frame.shape, type(frame))
+            frame = cv2.resize(frame, (width, height))
             writer.write(frame)
         writer.release()
         self.current_video += 1
