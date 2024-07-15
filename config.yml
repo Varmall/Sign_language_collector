@@ -9,7 +9,6 @@ words:
 - teacher
 - sit
 - deaf
-- test
 data_path: D:\Projects\Sign_language_collector\yes
 camera_id: 0
 video_size:
