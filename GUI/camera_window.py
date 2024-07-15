@@ -82,7 +82,10 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.is_in_session = not self.is_in_session
 
     def change_path(self):
-        path = Path(QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory"))
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory")
+        if not path:
+            return
+        path = Path(path)
         self.config.update({'data_path': str(path)})
         self.control_panel.set_path(path)
         with open("config.yml", "w") as f:
