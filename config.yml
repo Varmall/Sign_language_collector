@@ -7,11 +7,14 @@ words:
 - nice
 - eat
 - teacher
-data_path: D:\Projects\Sign_language_collector\GUI
+- sit
+- deaf
+- test
+data_path: D:\Projects\Sign_language_collector\yes
 camera_id: 0
 video_size:
-- 1920
-- 1080
+- 1600
+- 900
 fps: 30
 frames_per_vid: 40
 videos_per_word: 10
