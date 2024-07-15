@@ -185,9 +185,11 @@ class UiMainWindow(QtWidgets.QMainWindow):
         frame = args[0]
         image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format.Format_BGR888)
         if self._is_recording:
+            self.control_panel.session_record_button.setEnabled(False)
             self._frames_buffer.append(frame)
             if len(self._frames_buffer) >= int(self.control_panel.num_frames_cbox.currentText()):
                 self.save_video()
+                self.control_panel.session_record_button.setEnabled(True)
         self.frame.setPixmap(QtGui.QPixmap(image))
 
     def closeEvent(self, event):
