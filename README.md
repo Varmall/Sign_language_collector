@@ -17,3 +17,5 @@ The videos will be saved in the "{Save Path}/{word_timestamp}/" directory. Betwe
 "Start Record Session" Button: Starts the record session. Changes to "Stop Record Session" if in session.<br>
 
 The app displays example videos when you select word to record. It will automatically load relevant videos when you change word.<br>
+
+If you have multiple cameras, including the virtual ones, and want to choose specific, you can change the camera_id in the comfig.yml.
