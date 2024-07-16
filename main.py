@@ -14,8 +14,8 @@ def main():
         data_path = Path.cwd() / "data"
         data_path.mkdir(exist_ok=True)
         cfg['data_path'] = str(data_path)
-    with open(config_path, 'w') as f:
-        yaml.safe_dump(cfg, f, sort_keys=False)
+        with open(config_path, 'w') as f:
+            yaml.safe_dump(cfg, f, sort_keys=False)
     app = QApplication(sys.argv)
     main_window = UiMainWindow(cfg)
     main_window.show()
