@@ -78,10 +78,10 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.example_timer.timeout.connect(self.handle_example_timer)
         self.example_timer.start()
 
-    def toggle_recording_session(self):
+    def toggle_recording_session(self) -> None:
         self.is_in_session = not self.is_in_session
 
-    def change_path(self):
+    def change_path(self) -> None:
         path = QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory")
         if not path:
             return
@@ -91,7 +91,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
         with open("config.yml", "w") as f:
             yaml.safe_dump(self.config, f, sort_keys=False)
 
-    def handle_timer(self):
+    def handle_timer(self) -> None:
         self._timer_counter -= 1
         self.counter_label.setText(f"{self._timer_counter}")
         if self._timer_counter == 0:
@@ -103,7 +103,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
             self._timer_counter = self.delay
             self._is_recording = True
 
-    def handle_example_timer(self):
+    def handle_example_timer(self) -> None:
         current_word = self.control_panel.select_words_cbox.currentText()
         if current_word not in self.loaded_example_videos:
             self.load_example_videos(Path(f"examples/{current_word}"), current_word)
@@ -119,10 +119,10 @@ class UiMainWindow(QtWidgets.QMainWindow):
         if self._video_frame[0] == len(self.loaded_example_videos[current_word]):
             self._video_frame = (0, 0)
 
-    def reset_example(self):
+    def reset_example(self) -> None:
         self._video_frame = (0, 0)
 
-    def load_example_videos(self, dir_path: Path, word: str):
+    def load_example_videos(self, dir_path: Path, word: str) -> None:
         if word in self.loaded_example_videos:
             return
         video_paths = dir_path.glob('*.mp4')
@@ -139,7 +139,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
                 else:
                     cap.release()
 
-    def save_video(self):
+    def save_video(self) -> None:
         self._is_recording = False
         video_path, exists = get_path(self.config['data_path'], self.control_panel.select_words_cbox.currentText(),
                                       str(self.current_video))
@@ -181,7 +181,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
             self.counter_label.setVisible(False)
 
     @pyqtSlot(np.ndarray)
-    def receive_frame(self, *args):
+    def receive_frame(self, *args) -> None:
         frame = args[0]
         image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format.Format_BGR888)
         if self._is_recording:
@@ -219,7 +219,6 @@ class CaptureThread(QtCore.QThread):
                 break
             self.send_frame.emit(frame)
             # self.msleep(20)
-
 
     def start_capture(self):
         return self.video_capture.isOpened()
