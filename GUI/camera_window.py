@@ -9,20 +9,21 @@ from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtMultimedia import QMediaPlayer
 
 from GUI.control_panel import ControlPanel
-from utils.data_handle import get_path
+from utils.data_handle import get_path, create_dir
 
 
 class UiMainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, config: dict):
         super().__init__()
+        self._current_video = None
+        self._current_word_dir: Path | None = None
         self._video_frame = (0, 0)
         self._is_in_session = False
         self._is_recording = False
         self._frames_buffer = []
         self.loaded_example_videos = {}
         self.delay = 3
-        self.current_video = 0
         self.config = config
         self.central_widget = QtWidgets.QFrame(self)
         self._timer_counter = self.delay
@@ -42,6 +43,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.control_panel = ControlPanel(self.config, self)
         self.control_panel.session_record_button.clicked.connect(self.toggle_recording_session)
         self.control_panel.path_button.clicked.connect(self.change_path)
+        self.control_panel.select_words_cbox.currentTextChanged.connect(self.reset_example)
 
         self.central_v_layout = QtWidgets.QVBoxLayout()
         self.central_v_layout.addWidget(self.frame)
@@ -69,6 +71,13 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.video_example_display.setFixedSize(480, 270)
         self.video_example_display.move(self.width()-self.video_example_display.width() - 12, 12)
 
+        self.current_video_label = QtWidgets.QLabel(self)
+        self.current_video_label.setText(f"Recorded videos: {self.current_video} / {self.control_panel.num_vid_cbox.currentText()}")
+        self.current_video_label.setStyleSheet("background-color: rgba(100, 100, 100, 0.55); color: white;")
+        self.current_video_label.move(self.control_panel.width() + 20, 12)
+        self.current_video = 0
+        self.current_video_label.adjustSize()
+
         self.show()
         self.counter_label.move(self.frame.x() + int(video_size[0]/2), self.frame.y())
         self.load_example_videos(Path("examples/yes"), "yes")
@@ -80,6 +89,10 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
     def toggle_recording_session(self) -> None:
         self.is_in_session = not self.is_in_session
+        if self.is_in_session:
+            self._current_word_dir = create_dir(self.config['data_path'],
+                                                self.control_panel.select_words_cbox.currentText())
+            self.current_video = 0
 
     def change_path(self) -> None:
         path = QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory")
@@ -141,8 +154,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
     def save_video(self) -> None:
         self._is_recording = False
-        video_path, exists = get_path(self.config['data_path'], self.control_panel.select_words_cbox.currentText(),
-                                      str(self.current_video))
+        video_path, exists = get_path(self._current_word_dir, str(self.current_video))
 
         fourcc = cv2.VideoWriter.fourcc(*'mp4v')
         width, height = self.config.get('video_size', (640, 480))
@@ -179,6 +191,16 @@ class UiMainWindow(QtWidgets.QMainWindow):
             self.control_panel.session_record_button.setText('Start\nRecord session')
             self.timer.stop()
             self.counter_label.setVisible(False)
+
+    @property
+    def current_video(self):
+        return self._current_video
+
+    @current_video.setter
+    def current_video(self, nv: int):
+        self._current_video = nv
+        self.current_video_label.setText(f"Recorded videos: {self.current_video} / {self.control_panel.num_vid_cbox.currentText()}")
+        self.current_video_label.adjustSize()
 
     @pyqtSlot(np.ndarray)
     def receive_frame(self, *args) -> None:
