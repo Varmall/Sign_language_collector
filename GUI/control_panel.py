@@ -17,7 +17,6 @@ class ControlPanel(QtWidgets.QFrame):
         self.select_words_label = QtWidgets.QLabel('Select Word:')
         self.select_words_cbox = QtWidgets.QComboBox()
         self.select_words_cbox.addItems(config['words'])
-        self.select_words_cbox.currentTextChanged.connect(lambda: parent.reset_example())
 
         self.num_vid_layout = QtWidgets.QHBoxLayout()
         self.num_vid_label = QtWidgets.QLabel("Number of Videos:")
