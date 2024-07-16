@@ -3,7 +3,7 @@ The app to record word videos for sign language (ASL).
 Written in Python 3.11<br>
 Recommended IDE: Pycharm<br>
 Requires a camera for obvious reason<br>
-Recommended OS: Windows 10/11. Might work on Linux or MacOs but not tested.<br>
+Recommended OS: Windows 10/11. Might work on Linux or MacOs, but not tested.<br>
 
 After cloning, make venv with Python 3.11, install all packages from requirements.txt. Run main.py or build binary with main.py and run it.<br>
 
@@ -18,4 +18,4 @@ The videos will be saved in the "{Save Path}/{word_timestamp}/" directory. Betwe
 
 The app displays example videos when you select word to record. It will automatically load relevant videos when you change word.<br>
 
-If you have multiple cameras, including the virtual ones, and want to choose specific, you can change the camera_id in the comfig.yml.
+If you have multiple cameras, including the virtual ones, and want to choose a specific one, you can change the camera_id in the comfig.yml.
