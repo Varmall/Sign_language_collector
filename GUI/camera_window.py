@@ -245,7 +245,7 @@ class CaptureThread(QtCore.QThread):
             if not ret:
                 print("Video capture failed")
                 break
-
+            frame = cv2.flip(frame, 1)
             image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format.Format_BGR888)
             self.send_frame.emit(image, frame)
             # self.msleep(20)
