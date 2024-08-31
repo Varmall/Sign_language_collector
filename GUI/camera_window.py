@@ -69,7 +69,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.video_example_display = QtWidgets.QLabel(parent=self)
         self.video_example_display.setStyleSheet("background-color: rgb(200, 200, 0);")
         self.video_example_display.setFixedSize(480, 270)
-        self.video_example_display.move(self.width()-self.video_example_display.width() - 12, 12)
+        self.video_example_display.move(self.frame.x()+self.control_panel.width()+30 - 12, 12)
 
         self.current_video_label = QtWidgets.QLabel(self)
         self.current_video_label.setText(f"Recorded videos: {self.current_video} / {self.control_panel.num_vid_cbox.currentText()}")
