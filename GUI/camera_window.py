@@ -202,10 +202,9 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.current_video_label.setText(f"Recorded videos: {self.current_video} / {self.control_panel.num_vid_cbox.currentText()}")
         self.current_video_label.adjustSize()
 
-    @pyqtSlot(np.ndarray)
+    @pyqtSlot(QImage, np.ndarray)
     def receive_frame(self, *args) -> None:
-        frame = args[0]
-        image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format.Format_BGR888)
+        image, frame = args[0], args[1]
         if self._is_recording:
             self.control_panel.session_record_button.setEnabled(False)
             self._frames_buffer.append(frame)
@@ -221,7 +220,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
 
 class CaptureThread(QtCore.QThread):
-    send_frame = pyqtSignal(np.ndarray)
+    send_frame = pyqtSignal(QImage, np.ndarray)
 
     def __init__(self, camera_id: int, video_size: tuple = (640, 480), fps: int = 30, **kwargs):
         super().__init__(**kwargs)
@@ -239,7 +238,9 @@ class CaptureThread(QtCore.QThread):
             if not ret:
                 print("Video capture failed")
                 break
-            self.send_frame.emit(frame)
+
+            image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format.Format_BGR888)
+            self.send_frame.emit(image, frame)
             # self.msleep(20)
 
     def start_capture(self):
