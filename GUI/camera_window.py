@@ -4,9 +4,10 @@ import numpy as np
 import yaml
 from PyQt6 import QtCore, QtGui, QtWidgets
 import cv2
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtCore import pyqtSignal, pyqtSlot, QThreadPool
 from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtMultimedia import QMediaPlayer
+from threading import Thread
 
 from GUI.control_panel import ControlPanel
 from utils.data_handle import get_path, create_dir
@@ -38,6 +39,8 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.video_capture_thread = CaptureThread(camera_id=camera_id, video_size=video_size, fps=fps)
         self.video_capture_thread.send_frame.connect(self.receive_frame)
 
+        self.save_worker = None
+
         self.frame = QtWidgets.QLabel(self)
         self.frame.setStyleSheet("border: 3px solid rgb(0, 255, 0); border-radius: 7px;")
         self.control_panel = ControlPanel(self.config, self)
@@ -66,20 +69,19 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.resize(video_size[0] + self.control_panel.width() + 30, video_size[1])
         self.video_capture_thread.start()
 
-        self.video_example_display = QtWidgets.QLabel(parent=self)
+        self.video_example_display = QtWidgets.QLabel(parent=self.frame)
         self.video_example_display.setStyleSheet("background-color: rgb(200, 200, 0);")
         self.video_example_display.setFixedSize(480, 270)
-        self.video_example_display.move(self.frame.x()+self.control_panel.width()+30 - 12, 12)
 
-        self.current_video_label = QtWidgets.QLabel(self)
+        self.current_video_label = QtWidgets.QLabel(self.frame)
         self.current_video_label.setText(f"Recorded videos: {self.current_video} / {self.control_panel.num_vid_cbox.currentText()}")
-        self.current_video_label.setStyleSheet("background-color: rgba(100, 100, 100, 0.55); color: white;")
-        self.current_video_label.move(self.control_panel.width() + 20, 12)
+        self.current_video_label.setStyleSheet("background-color: rgba(100, 100, 100, 0.55); color: white; border:0px; border-radius: 3px;")
+        self.current_video_label.move(4, 4)
         self.current_video = 0
         self.current_video_label.adjustSize()
 
-        self.show()
-        self.counter_label.move(self.frame.x() + int(video_size[0]/2), self.frame.y())
+        self.counter_label.move(self.frame.x() + int(video_size[0]/2), self.frame.y() + 8)
+        self.video_example_display.move(self.frame.x(), self.current_video_label.height() + 5)
         self.load_example_videos(Path("examples/yes"), "yes")
 
         self.example_timer = QtCore.QTimer()
@@ -155,16 +157,9 @@ class UiMainWindow(QtWidgets.QMainWindow):
     def save_video(self) -> None:
         self._is_recording = False
         video_path, exists = get_path(self._current_word_dir, str(self.current_video))
+        self.save_worker = Thread(target=lambda: worker_save_vid(self.config.copy(), str(video_path), self._frames_buffer))
+        self.save_worker.start()
 
-        fourcc = cv2.VideoWriter.fourcc(*'mp4v')
-        width, height = self.config.get('video_size', (640, 480))
-        writer = cv2.VideoWriter(video_path, fourcc, self.config.get('fps', 30),
-                                 (width, height), isColor=True)
-
-        for frame in self._frames_buffer:
-            frame = cv2.resize(frame, (width, height))
-            writer.write(frame)
-        writer.release()
         self.current_video += 1
         if self.current_video <= int(self.control_panel.num_vid_cbox.currentText()) - 1:
             self.is_in_session = True
@@ -217,6 +212,18 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.video_capture_thread.video_capture.release()
         self.video_capture_thread.running = False
         super().closeEvent(event)
+
+
+def worker_save_vid(config: dict, video_path: str, frames_buffer: list) -> None:
+    fourcc = cv2.VideoWriter.fourcc(*'mp4v')
+    width, height = config.get('video_size', (640, 480))
+    writer = cv2.VideoWriter(video_path, fourcc, config.get('fps', 30),
+                             (width, height), isColor=True)
+
+    for frame in frames_buffer:
+        frame = cv2.resize(frame, (width, height))
+        writer.write(frame)
+    writer.release()
 
 
 class CaptureThread(QtCore.QThread):
