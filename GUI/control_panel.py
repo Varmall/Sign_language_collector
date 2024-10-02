@@ -36,6 +36,8 @@ class ControlPanel(QtWidgets.QFrame):
         self.num_frames_layout.addStretch(1)
         self.num_frames_layout.addWidget(self.num_frames_cbox)
 
+        self.compress_button = QtWidgets.QPushButton('Zip Data')
+
         # Layout stuff
         self.v_layout = QtWidgets.QVBoxLayout()
         self.v_layout.setContentsMargins(0, 0, 0, 0)
@@ -49,6 +51,8 @@ class ControlPanel(QtWidgets.QFrame):
         self.v_layout.addLayout(self.num_frames_layout)
         self.v_layout.addWidget(self.session_record_button)
         self.v_layout.addStretch(1)
+        self.v_layout.addWidget(self.compress_button)
+        self.v_layout.addStretch(19)
         self.setLayout(self.v_layout)
 
     def set_path(self, path: Path):
