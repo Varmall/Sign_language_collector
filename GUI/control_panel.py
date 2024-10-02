@@ -36,7 +36,9 @@ class ControlPanel(QtWidgets.QFrame):
         self.num_frames_layout.addStretch(1)
         self.num_frames_layout.addWidget(self.num_frames_cbox)
 
-        self.compress_button = QtWidgets.QPushButton('Zip Data')
+        self.open_zip_location_ck_box = QtWidgets.QCheckBox("Open Zip Location", self)
+        self.open_zip_location_ck_box.setChecked(True)
+        self.compress_button = QtWidgets.QPushButton('Zip Data', self)
 
         # Layout stuff
         self.v_layout = QtWidgets.QVBoxLayout()
@@ -51,6 +53,7 @@ class ControlPanel(QtWidgets.QFrame):
         self.v_layout.addLayout(self.num_frames_layout)
         self.v_layout.addWidget(self.session_record_button)
         self.v_layout.addStretch(1)
+        self.v_layout.addWidget(self.open_zip_location_ck_box)
         self.v_layout.addWidget(self.compress_button)
         self.v_layout.addStretch(19)
         self.setLayout(self.v_layout)
