@@ -1,5 +1,7 @@
+import os
 from pathlib import Path
 from datetime import datetime
+from zipfile import ZipFile, ZIP_DEFLATED
 
 
 def get_path(dir_path: Path | str, video_name: str) -> tuple[Path, bool]:
@@ -16,7 +18,7 @@ def create_dir(data_path: Path | str, word: str) -> Path:
     """Creates a directory for both data_path if it does not exist, and for word with the timestamp in the word dir
     name.
     :param data_path: Path to the data directory
-    :param word: Folder name (should be word)
+    :param word: Folder name (should be a word)
     :return: Path to the created directory"""
     if isinstance(data_path, str):
         data_path = Path(data_path)
@@ -25,3 +27,16 @@ def create_dir(data_path: Path | str, word: str) -> Path:
     dir_path = data_path / f"{word}_{date_time}"
     dir_path.mkdir(exist_ok=True)
     return data_path / f"{word}_{date_time}"
+
+
+def zip_data(data_path: Path | str, zip_name: str) -> Path:
+    archive_path = Path(data_path, zip_name)
+    with ZipFile(archive_path, 'w', ZIP_DEFLATED) as zip:
+        files_list = os.listdir(data_path)
+        dirs_to_compress = [my_dir for my_dir in os.listdir(str(data_path))
+                            if os.path.isdir(os.path.join(data_path, my_dir))]
+        for my_dir in dirs_to_compress:
+            zip.write(os.path.join(data_path, my_dir), my_dir)
+            videos_list = os.listdir(os.path.join(data_path, my_dir))
+            for video in videos_list:
+                zip.write(os.path.join(data_path, my_dir, video), arcname=os.path.join(my_dir, video))
