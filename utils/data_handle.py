@@ -31,12 +31,12 @@ def create_dir(data_path: Path | str, word: str) -> Path:
 
 def zip_data(data_path: Path | str, zip_name: str) -> Path:
     archive_path = Path(data_path, zip_name)
-    with ZipFile(archive_path, 'w', ZIP_DEFLATED) as zip:
-        files_list = os.listdir(data_path)
+    with ZipFile(archive_path, 'w', ZIP_DEFLATED) as zip_file:
         dirs_to_compress = [my_dir for my_dir in os.listdir(str(data_path))
                             if os.path.isdir(os.path.join(data_path, my_dir))]
         for my_dir in dirs_to_compress:
-            zip.write(os.path.join(data_path, my_dir), my_dir)
+            zip_file.write(os.path.join(data_path, my_dir), my_dir)
             videos_list = os.listdir(os.path.join(data_path, my_dir))
             for video in videos_list:
-                zip.write(os.path.join(data_path, my_dir, video), arcname=os.path.join(my_dir, video))
+                zip_file.write(os.path.join(data_path, my_dir, video), arcname=os.path.join(my_dir, video))
+    return archive_path
