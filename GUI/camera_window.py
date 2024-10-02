@@ -1,3 +1,5 @@
+import platform
+import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -170,7 +172,15 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self._frames_buffer = []
 
     def handle_zip_data(self):
-        zip_data(self.config['data_path'], "data.zip")
+        archive_path = zip_data(self.config['data_path'], "data.zip")
+        if not self.control_panel.open_zip_location_ck_box.isChecked():
+            return
+        if platform.system() == "Windows":
+            subprocess.Popen(f'explorer /select,{archive_path}')
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", archive_path])
+        else:
+            subprocess.Popen(["xdg-open", archive_path])
 
     @property
     def is_in_session(self):
