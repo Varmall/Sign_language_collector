@@ -10,7 +10,7 @@ from PyQt6.QtMultimedia import QMediaPlayer
 from threading import Thread
 
 from GUI.control_panel import ControlPanel
-from utils.data_handle import get_path, create_dir
+from utils.data_handle import get_path, create_dir, zip_data
 
 
 class UiMainWindow(QtWidgets.QMainWindow):
@@ -47,6 +47,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
         self.control_panel.session_record_button.clicked.connect(self.toggle_recording_session)
         self.control_panel.path_button.clicked.connect(self.change_path)
         self.control_panel.select_words_cbox.currentTextChanged.connect(self.reset_example)
+        self.control_panel.compress_button.clicked.connect(self.handle_zip_data)
 
         self.central_v_layout = QtWidgets.QVBoxLayout()
         self.central_v_layout.addWidget(self.frame)
@@ -168,6 +169,9 @@ class UiMainWindow(QtWidgets.QMainWindow):
             self.current_video = 0
         self._frames_buffer = []
 
+    def handle_zip_data(self):
+        zip_data(self.config['data_path'], "data.zip")
+
     @property
     def is_in_session(self):
         return self._is_in_session
@@ -179,11 +183,13 @@ class UiMainWindow(QtWidgets.QMainWindow):
         if self.is_in_session:
             self.frame.setStyleSheet("border: 3px solid rgb(255, 255, 0); border-radius: 7px;")
             self.control_panel.session_record_button.setText('Stop\nRecord session')
+            self.control_panel.compress_button.setEnabled(False)
             self.counter_label.setVisible(True)
             self.timer.start()
         else:
             self.frame.setStyleSheet("border: 3px solid rgb(0, 255, 0); border-radius: 7px;")
             self.control_panel.session_record_button.setText('Start\nRecord session')
+            self.control_panel.compress_button.setEnabled(True)
             self.timer.stop()
             self.counter_label.setVisible(False)
 
