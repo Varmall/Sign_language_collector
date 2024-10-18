@@ -51,11 +51,12 @@ class ControlPanel(QtWidgets.QFrame):
         self.v_layout.addWidget(self.select_words_cbox)
         self.v_layout.addLayout(self.num_vid_layout)
         self.v_layout.addLayout(self.num_frames_layout)
+        self.v_layout.addStretch(1)
         self.v_layout.addWidget(self.session_record_button)
         self.v_layout.addStretch(1)
         self.v_layout.addWidget(self.open_zip_location_ck_box)
         self.v_layout.addWidget(self.compress_button)
-        self.v_layout.addStretch(19)
+        self.v_layout.addStretch(18)
         self.setLayout(self.v_layout)
 
     def set_path(self, path: Path):
