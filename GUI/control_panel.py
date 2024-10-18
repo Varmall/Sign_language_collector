@@ -59,6 +59,9 @@ class ControlPanel(QtWidgets.QFrame):
         self.setLayout(self.v_layout)
 
     def set_path(self, path: Path):
-        self.current_path_label.setText(f"Save Path: {path.relative_to(Path.cwd())}")
+        if path.is_relative_to(Path.cwd()):
+            self.current_path_label.setText(f"Save Path: {path.relative_to(Path.cwd())}")
+        else:
+            self.current_path_label.setText(f"Save Path: {path}")
         self.current_path_label.setToolTip(f"{path.absolute()}")
 
