@@ -106,7 +106,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
         path = Path(path)
         self.config.update({'data_path': str(path)})
         self.control_panel.set_path(path)
-        with open("config.yml", "w") as f:
+        with open("config.yml", "w", encoding="UTF-8") as f:
             yaml.safe_dump(self.config, f, sort_keys=False)
 
     def handle_timer(self) -> None:
